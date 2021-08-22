@@ -1,0 +1,162 @@
+plugins {
+    id "idea"
+    id "org.springframework.boot" version "$springBootVersion" apply false
+    id "org.hidetake.swagger.generator" version "2.14.0" apply false
+
+    id "org.jetbrains.kotlin.kapt" version "$kotlinVersion" apply false
+    id "org.jetbrains.kotlin.jvm" version "$kotlinVersion" apply false
+    id "org.jetbrains.kotlin.plugin.allopen" version "$kotlinVersion" apply false
+    id "org.jetbrains.kotlin.plugin.noarg" version "$kotlinVersion" apply false
+
+    id "com.github.node-gradle.node" version "2.2.4" apply false
+}
+
+repositories {
+    maven { url "https://repo1.maven.org/maven2/" }
+}
+
+apply plugin: "idea"
+apply plugin: "kotlin"
+apply plugin: "kotlin-kapt"
+apply plugin: "kotlin-spring"
+apply plugin: "kotlin-jpa"
+
+apply plugin: "base"
+apply plugin: "java"
+apply plugin: "org.springframework.boot"
+
+apply plugin: "com.github.node-gradle.node"
+
+dependencies {
+    api platform("org.jetbrains.kotlin:kotlin-bom:$kotlinVersion")
+    api platform("org.springframework.boot:spring-boot-dependencies:$springBootVersion")
+    api platform("org.camunda.bpm:camunda-bom:$camundaVersion")
+
+    kapt("org.springframework.boot:spring-boot-configuration-processor:$springBootVersion")
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    implementation "org.jetbrains.kotlin:kotlin-reflect"
+
+    implementation "io.github.microutils:kotlin-logging:2.0.10"
+    implementation "net.logstash.logback:logstash-logback-encoder:6.6"
+
+    implementation "org.springframework.boot:spring-boot-starter-web-services"
+    implementation "org.springframework:spring-context-support"
+    implementation "org.springframework.boot:spring-boot-starter-validation"
+
+    implementation "org.camunda.bpm.springboot:camunda-bpm-spring-boot-starter-webapp"
+    implementation "org.camunda.bpm.springboot:camunda-bpm-spring-boot-starter-rest"
+    implementation "org.camunda.bpm.webapp:camunda-webapp:"
+    implementation "org.camunda.bpm:camunda-bom"
+    implementation "org.camunda.bpm.extension.swagger:camunda-bpm-swagger-json:7.8.0"
+    implementation "org.camunda.bpm.model:camunda-dmn-model"
+
+    implementation 'io.springfox:springfox-swagger2:2.9.2'
+    implementation 'io.springfox:springfox-swagger-ui:2.9.2'
+    implementation 'org.webjars:swagger-ui:3.1.4'
+
+    implementation "org.postgresql:postgresql:42.2.23"
+    implementation "com.zaxxer:HikariCP"
+    implementation "org.springframework.boot:spring-boot-starter-data-jpa"
+    implementation "com.h2database:h2"
+
+    // Tests
+    testImplementation "org.assertj:assertj-core"
+    testImplementation "org.mockito:mockito-core"
+    testImplementation "org.mockito:mockito-junit-jupiter"
+    testImplementation 'com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0'
+    testImplementation "org.junit.jupiter:junit-jupiter-params"
+    testImplementation "org.junit.jupiter:junit-jupiter-api"
+    testImplementation 'io.kotlintest:kotlintest-runner-junit5:3.4.2'
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine"
+    testCompileOnly "junit:junit:4.12"
+    testRuntimeOnly "org.junit.vintage:junit-vintage-engine"
+
+    testImplementation "com.h2database:h2"
+    testImplementation "org.springframework.boot:spring-boot-starter-test"
+    testImplementation "com.fasterxml.jackson.module:jackson-module-jaxb-annotations"
+
+    testImplementation "org.camunda.bpm.assert:camunda-bpm-assert:10.0.0"
+    testImplementation "org.camunda.bpm.springboot:camunda-bpm-spring-boot-starter-test"
+    testImplementation "org.camunda.bpm.extension.mockito:camunda-bpm-mockito:5.15.0"
+    testImplementation "org.camunda.bpm.extension:camunda-bpm-process-test-coverage:0.4.0"
+
+    testImplementation "org.jetbrains.kotlin:kotlin-test-common"
+    testImplementation "org.springframework.boot:spring-boot-starter-cache"
+//    testImplementation "org.reflections:reflections"
+}
+//    // Common libs & utils
+//    implementation "com.fasterxml.jackson.module:jackson-module-kotlin"
+//    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-xml"
+//    implementation "org.json:json"
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+    kotlinOptions {
+        jvmTarget = "11"
+    }
+}
+
+// needed for correct generation of ide hints for application.yml
+compileJava.dependsOn(processResources)
+
+jar {
+    archiveBaseName = project.name
+    archiveVersion = project.version
+}
+
+bootJar {
+    archiveFileName = "${archiveBaseName.get()}.jar"
+}
+
+node {
+    version = "16.4.1"
+    npmVersion = "7.19.1"
+    download = true
+    npmInstallCommand = "ci"
+}
+
+tasks.npmSetup {
+    doFirst {
+        args.addAll(["--registry", "https://nexus.tcsbank.ru/repository/npm-all/"])
+    }
+}
+
+clean {
+    delete "target"
+    delete "node_modules"
+}
+
+task bpmnlintTest(type: NpmTask, dependsOn: 'npmInstall') {
+    def bpmnFiles = fileTree("$projectDir/src/main/resources/bpmn")
+            .files
+            .findAll { it.isFile() && it.path.endsWith('bpmn') }
+
+    def argList = ['run', 'bpmnlint']
+    bpmnFiles.each { File file ->
+        argList.add("$file.path")
+    }
+
+    args = argList as Iterable
+}
+
+test {
+    maxHeapSize = "1024m"
+    useJUnitPlatform()
+
+    //because the gradle can ignore change of resource bpmn and not run the tests again
+    outputs.upToDateWhen { false }
+
+    dependsOn bpmnlintTest
+}
+
+task copyProcessTestCoverageReports(type: Copy) {
+    from "$projectDir/target/process-test-coverage"
+    into "$buildDir/process-test-coverage"
+}
+
+test.finalizedBy copyProcessTestCoverageReports

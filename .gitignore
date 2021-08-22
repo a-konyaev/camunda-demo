@@ -1,0 +1,13 @@
+.idea
+.gradle
+*.iml
+/*/out
+/out
+/*/build
+/build
+/target
+*-local.yml
+/*/target
+.DS_Store
+
+node_modules/

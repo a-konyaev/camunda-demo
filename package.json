@@ -1,0 +1,10 @@
+{
+  "name": "camunda-demo",
+  "description": "",
+  "dependencies": {
+    "bpmnlint": "^7.2.1"
+  },
+  "scripts": {
+    "bpmnlint": "bpmnlint"
+  }
+}

@@ -1,0 +1,33 @@
+spring:
+  main:
+    banner-mode: "off"
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQL10Dialect
+    hibernate:
+      use-new-id-generator-mappings: false
+    show_sql: false
+
+camunda:
+  datasource:
+    jdbc-url: jdbc:postgresql://localhost:5432/
+    username: demo
+    password: demo
+  bpm:
+    database:
+      schema-name: public
+      table-prefix: public.
+    history-level: full
+    generic-properties:
+      properties:
+        failed-job-retry-time-cycle: R3/PT5M
+        batch-operation-history-time-to-live: P30D
+        history-time-to-live: P30D
+        history-cleanup-strategy: removalTimeBased
+        history-removal-time-strategy: end
+        history-cleanup-batch-size: 100
+        history-cleanup-batch-window-start-time: "00:00"
+        history-cleanup-batch-window-end-time: "06:00"
+    admin-user:
+      id: demo
+      password: demo
+      firstName: Demo
