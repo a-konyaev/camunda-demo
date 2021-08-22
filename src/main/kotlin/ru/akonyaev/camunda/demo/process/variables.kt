@@ -16,6 +16,7 @@ var DelegateExecution.templateId: String by VariableDelegate(TEMPLATE_ID)
 const val CORRELATION_ID = "correlationId"
 var DelegateExecution.correlationId: String by VariableDelegate(CORRELATION_ID)
 
+// !! will be serialized with Java serialization (by default)
 const val PRESENTATION_DATE = "presentationDate"
 var DelegateExecution.presentationDate: LocalDateTime by VariableDelegate(PRESENTATION_DATE)
 
