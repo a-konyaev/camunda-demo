@@ -2,6 +2,8 @@
 
 The project demonstrates working with [Camunda BPM](https://github.com/camunda)
 
+Slides: [Camunda pitfalls](https://noti.st/akonyaev/DjOaCs/camunda-pitfalls)
+
 Building:
 ```shell
 ./gradlew clean build
