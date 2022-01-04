@@ -15,11 +15,15 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
+import ru.akonyaev.camunda.demo.model.SpeakAtMeetupProcessInfo
+import ru.akonyaev.camunda.demo.model.SpeakAtMeetupRequest
 import ru.akonyaev.camunda.demo.process.ProcessDefinitionName
+import java.time.ZoneId
+import java.util.Date
 import javax.validation.Valid
 
 @Api(
-    description = "Выступление на митапе",
+    description = "Speak at a meetup",
     tags = ["speak-at-meetup"]
 )
 @RestController
@@ -29,7 +33,7 @@ class ProcessController(
     private val historyService: HistoryService
 ) {
 
-    @ApiOperation(value = "Запустить процесс")
+    @ApiOperation(value = "Start the process")
     @ApiResponses(
         value = [
             ApiResponse(code = 200, message = "Process started", response = String::class),
@@ -68,7 +72,7 @@ class ProcessController(
         }
     }
 
-    @ApiOperation(value = "Получить список активных процессов")
+    @ApiOperation(value = "Get active processes")
     @GetMapping("/", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun getActiveProcesses() =
         this.getActiveProcessInstances()
@@ -76,9 +80,12 @@ class ProcessController(
                 SpeakAtMeetupProcessInfo(
                     instanceId = it.id,
                     state = it.state,
-                    startTime = it.startTime
+                    startTime = it.startTime.toLocalDateTime()
                 )
             }
+
+    private fun Date.toLocalDateTime() =
+        this.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime()
 
     private fun getActiveProcessInstances(requestId: String? = null): List<HistoricProcessInstance> {
         val query = historyService

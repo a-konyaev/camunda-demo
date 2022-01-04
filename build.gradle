@@ -1,14 +1,14 @@
 plugins {
     id "idea"
     id "org.springframework.boot" version "$springBootVersion" apply false
-    id "org.hidetake.swagger.generator" version "2.14.0" apply false
+    id "org.hidetake.swagger.generator" version "2.19.1" apply false
 
     id "org.jetbrains.kotlin.kapt" version "$kotlinVersion" apply false
     id "org.jetbrains.kotlin.jvm" version "$kotlinVersion" apply false
     id "org.jetbrains.kotlin.plugin.allopen" version "$kotlinVersion" apply false
     id "org.jetbrains.kotlin.plugin.noarg" version "$kotlinVersion" apply false
 
-    id "com.github.node-gradle.node" version "2.2.4" apply false
+    id "com.github.node-gradle.node" version "3.1.1" apply false
 }
 
 repositories {
@@ -32,21 +32,23 @@ dependencies {
     api platform("org.springframework.boot:spring-boot-dependencies:$springBootVersion")
     api platform("org.camunda.bpm:camunda-bom:$camundaVersion")
 
+    // TODO: org.camunda.bpm.assert:camunda-bpm-assert depends on 3.11.1
+    //  but after 3.19.1 compatibility breaks
+    api enforcedPlatform("org.assertj:assertj-core:3.19.0")
+
     kapt("org.springframework.boot:spring-boot-configuration-processor:$springBootVersion")
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
     implementation "org.jetbrains.kotlin:kotlin-reflect"
 
-    implementation "io.github.microutils:kotlin-logging:2.0.10"
-    implementation "net.logstash.logback:logstash-logback-encoder:6.6"
+    implementation "io.github.microutils:kotlin-logging:2.1.21"
+    implementation "net.logstash.logback:logstash-logback-encoder:7.0.1"
 
     implementation "org.springframework.boot:spring-boot-starter-web-services"
     implementation "org.springframework:spring-context-support"
     implementation "org.springframework.boot:spring-boot-starter-validation"
 
     implementation "org.camunda.bpm.springboot:camunda-bpm-spring-boot-starter-webapp"
-    implementation "org.camunda.bpm.springboot:camunda-bpm-spring-boot-starter-rest"
-    implementation "org.camunda.bpm.webapp:camunda-webapp:"
     implementation "org.camunda.bpm:camunda-bom"
     implementation "org.camunda.bpm.extension.swagger:camunda-bpm-swagger-json:7.8.0"
     implementation "org.camunda.bpm.model:camunda-dmn-model"
@@ -55,10 +57,12 @@ dependencies {
     implementation 'io.springfox:springfox-swagger-ui:2.9.2'
     implementation 'org.webjars:swagger-ui:3.1.4'
 
-    implementation "org.postgresql:postgresql:42.2.23"
+    implementation "org.postgresql:postgresql:42.3.1"
     implementation "com.zaxxer:HikariCP"
     implementation "org.springframework.boot:spring-boot-starter-data-jpa"
     implementation "com.h2database:h2"
+
+    implementation 'io.camunda:spring-zeebe-starter:1.2.7'
 
     // Tests
     testImplementation "org.assertj:assertj-core"
@@ -108,16 +112,10 @@ bootJar {
 }
 
 node {
-    version = "16.4.1"
-    npmVersion = "7.19.1"
+    version = "16.13.1"
+    npmVersion = "8.3.0"
     download = true
     npmInstallCommand = "ci"
-}
-
-tasks.npmSetup {
-    doFirst {
-        args.addAll(["--registry", "https://registry.npmjs.org/"])
-    }
 }
 
 clean {
@@ -147,10 +145,3 @@ test {
 
     dependsOn bpmnlintTest
 }
-
-task copyProcessTestCoverageReports(type: Copy) {
-    from "$projectDir/target/process-test-coverage"
-    into "$buildDir/process-test-coverage"
-}
-
-test.finalizedBy copyProcessTestCoverageReports

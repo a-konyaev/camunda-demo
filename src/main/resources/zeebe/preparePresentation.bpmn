@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_1je9sn0" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.11.1" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="1.1.0">
+  <bpmn:collaboration id="Collaboration_0eepa7a">
+    <bpmn:participant id="PreparePresentation" name="Подготовить презентацию" processRef="PreparePresentationProcess" />
+  </bpmn:collaboration>
+  <bpmn:process id="PreparePresentationProcess" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>Flow_10l1v0y</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:exclusiveGateway id="Gateway_0sgl2kr">
+      <bpmn:incoming>Flow_12f0f5g</bpmn:incoming>
+      <bpmn:incoming>Flow_1objz0u</bpmn:incoming>
+      <bpmn:outgoing>Flow_11odc8o</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="Gateway_0w0xt9n" default="Flow_0psq6f4">
+      <bpmn:incoming>Flow_18x0phq</bpmn:incoming>
+      <bpmn:outgoing>Flow_0psq6f4</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1objz0u</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="WriteDraftTask" name="Подготовить черновик">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="write-draft" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_10l1v0y</bpmn:incoming>
+      <bpmn:outgoing>Flow_12f0f5g</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="FixRemarksTask" name="Доработка презентации">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="fix-remarks" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0sii03u</bpmn:incoming>
+      <bpmn:outgoing>Flow_18x0phq</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_10l1v0y" sourceRef="StartEvent_1" targetRef="WriteDraftTask" />
+    <bpmn:sequenceFlow id="Flow_0psq6f4" sourceRef="Gateway_0w0xt9n" targetRef="Event_0207v4e" />
+    <bpmn:sequenceFlow id="Flow_12f0f5g" sourceRef="WriteDraftTask" targetRef="Gateway_0sgl2kr" />
+    <bpmn:sequenceFlow id="Flow_1objz0u" name="Остались замечания" sourceRef="Gateway_0w0xt9n" targetRef="Gateway_0sgl2kr">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= hasRemarks</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_11odc8o" sourceRef="Gateway_0sgl2kr" targetRef="DoReviewTask" />
+    <bpmn:sequenceFlow id="Flow_18x0phq" sourceRef="FixRemarksTask" targetRef="Gateway_0w0xt9n" />
+    <bpmn:sequenceFlow id="Flow_0sii03u" sourceRef="DoReviewTask" targetRef="FixRemarksTask" />
+    <bpmn:endEvent id="Event_0207v4e">
+      <bpmn:incoming>Flow_0psq6f4</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:userTask id="DoReviewTask" name="Ревью">
+      <bpmn:incoming>Flow_11odc8o</bpmn:incoming>
+      <bpmn:outgoing>Flow_0sii03u</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:textAnnotation id="TextAnnotation_07bijhr">
+      <bpmn:text>Входные параметры:
+- title: String
+- templateId: String</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_0qr89ph" sourceRef="StartEvent_1" targetRef="TextAnnotation_07bijhr" />
+    <bpmn:textAnnotation id="TextAnnotation_0zgom6r">
+      <bpmn:text>Выходные параметры:
+- fileId: String</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_03i9uec" sourceRef="Event_0207v4e" targetRef="TextAnnotation_0zgom6r" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_0eepa7a">
+      <bpmndi:BPMNShape id="Participant_0waq58a_di" bpmnElement="PreparePresentation" isHorizontal="true">
+        <dc:Bounds x="129" y="79" width="851" height="250" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0zgom6r_di" bpmnElement="TextAnnotation_0zgom6r">
+        <dc:Bounds x="810" y="93" width="138" height="37" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0sii03u_di" bpmnElement="Flow_0sii03u">
+        <di:waypoint x="570" y="260" />
+        <di:waypoint x="620" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_18x0phq_di" bpmnElement="Flow_18x0phq">
+        <di:waypoint x="720" y="260" />
+        <di:waypoint x="755" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_11odc8o_di" bpmnElement="Flow_11odc8o">
+        <di:waypoint x="435" y="260" />
+        <di:waypoint x="470" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1objz0u_di" bpmnElement="Flow_1objz0u">
+        <di:waypoint x="780" y="235" />
+        <di:waypoint x="780" y="170" />
+        <di:waypoint x="410" y="170" />
+        <di:waypoint x="410" y="235" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="568" y="136" width="55" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_12f0f5g_di" bpmnElement="Flow_12f0f5g">
+        <di:waypoint x="350" y="260" />
+        <di:waypoint x="385" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0psq6f4_di" bpmnElement="Flow_0psq6f4">
+        <di:waypoint x="805" y="260" />
+        <di:waypoint x="892" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_10l1v0y_di" bpmnElement="Flow_10l1v0y">
+        <di:waypoint x="215" y="260" />
+        <di:waypoint x="250" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="179" y="242" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0sgl2kr_di" bpmnElement="Gateway_0sgl2kr" isMarkerVisible="true">
+        <dc:Bounds x="385" y="235" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0w0xt9n_di" bpmnElement="Gateway_0w0xt9n" isMarkerVisible="true">
+        <dc:Bounds x="755" y="235" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_065rrqn_di" bpmnElement="WriteDraftTask">
+        <dc:Bounds x="250" y="220" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1xpialq_di" bpmnElement="FixRemarksTask">
+        <dc:Bounds x="620" y="220" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_07bijhr_di" bpmnElement="TextAnnotation_07bijhr">
+        <dc:Bounds x="170" y="90" width="170" height="60" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0207v4e_di" bpmnElement="Event_0207v4e">
+        <dc:Bounds x="892" y="242" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0bap3m9_di" bpmnElement="DoReviewTask">
+        <dc:Bounds x="470" y="220" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_0qr89ph_di" bpmnElement="Association_0qr89ph">
+        <di:waypoint x="199" y="242" />
+        <di:waypoint x="211" y="150" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_03i9uec_di" bpmnElement="Association_03i9uec">
+        <di:waypoint x="905" y="243" />
+        <di:waypoint x="869" y="130" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

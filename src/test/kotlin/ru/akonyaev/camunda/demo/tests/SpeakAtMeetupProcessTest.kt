@@ -23,7 +23,7 @@ import org.junit.Rule
 import org.junit.Test
 import ru.akonyaev.camunda.demo.camunda.ProcessDefinitionKey
 import ru.akonyaev.camunda.demo.component.PresentationStorage
-import ru.akonyaev.camunda.demo.controller.SpeakAtMeetupRequest
+import ru.akonyaev.camunda.demo.model.SpeakAtMeetupRequest
 import ru.akonyaev.camunda.demo.process.FILE_ID
 import ru.akonyaev.camunda.demo.process.PRESENTATION_DATE
 import ru.akonyaev.camunda.demo.process.ProcessDefinitionName

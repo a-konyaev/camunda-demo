@@ -1,0 +1,69 @@
+version: '3'
+
+services:
+  elasticsearch:
+    container_name: elasticsearch
+    image: elasticsearch:7.16.2
+    ports:
+      - "9200:9200"
+    environment:
+      - discovery.type=single-node
+      - cluster.name=elasticsearch
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+  #    volumes:
+  #      - elasticsearch_data:/usr/share/elasticsearch/data
+
+  zeebe:
+    container_name: zeebe
+    image: camunda/zeebe:1.2.9
+    ports:
+      - "26500:26500"
+      - "9600:9600"
+      - "5701:5701"
+    environment:
+      - ZEEBE_LOG_LEVEL=debug
+    volumes:
+      - ./exporters/zeebe-hazelcast-exporter-1.0.1-with-dependencies.jar:/usr/local/zeebe/exporters/zeebe-hazelcast-exporter.jar
+      - ./zeebe/application.yaml:/usr/local/zeebe/config/application.yaml
+    depends_on:
+      - elasticsearch
+
+  operate:
+    container_name: operate
+    image: camunda/operate:1.2.9
+    ports:
+      - "8083:8080"
+    volumes:
+      - ./operate/application.yml:/usr/local/operate/config/application.yml
+    depends_on:
+      - zeebe
+      - elasticsearch
+
+  tasklist:
+    container_name: tasklist
+    image: camunda/tasklist:1.2.9
+    ports:
+      - "8084:8080"
+    environment:
+      - GRAPHQL_PLAYGROUND_ENABLED=true
+      - GRAPHQL_PLAYGROUND_SETTINGS_REQUEST_CREDENTIALS=include
+    volumes:
+      - ./tasklist/application.yml:/app/resources/application.yml
+    depends_on:
+      - zeebe
+      - elasticsearch
+
+  monitor:
+    container_name: monitor
+    image: ghcr.io/camunda-community-hub/zeebe-simple-monitor:2.0.0
+    ports:
+      - "8082:8082"
+    environment:
+      - zeebe.client.broker.contactPoint=zeebe:26500
+      - zeebe.client.worker.hazelcast.connection=zeebe:5701
+    volumes:
+      - ./monitor/application.yaml:/application.yaml
+    depends_on:
+      - zeebe
+
+

@@ -16,6 +16,7 @@ camunda:
     database:
       schema-name: public
       table-prefix: public.
+    deployment-resource-pattern: "classpath*:/bpmn/**/*.*"
     history-level: full
     generic-properties:
       properties:
@@ -31,3 +32,8 @@ camunda:
       id: demo
       password: demo
       firstName: Demo
+
+zeebe:
+  client:
+    gateway.address: localhost:26500
+    security.plaintext: true

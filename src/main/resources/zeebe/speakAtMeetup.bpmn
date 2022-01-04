@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.11.1">
+  <bpmn:collaboration id="Collaboration_1fn6lin">
+    <bpmn:participant id="SpeakAtMeetup" name="Выступить на митапе" processRef="SpeakAtMeetupProcess" />
+  </bpmn:collaboration>
+  <bpmn:process id="SpeakAtMeetupProcess" isExecutable="true">
+    <bpmn:startEvent id="StartEvent">
+      <bpmn:outgoing>SequenceFlow_1sz6737</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_06ytcxw" sourceRef="AgreeAnAppointmentTask" targetRef="Gateway_0lassa0" />
+    <bpmn:sequenceFlow id="SequenceFlow_1sz6737" sourceRef="StartEvent" targetRef="AgreeAnAppointmentTask" />
+    <bpmn:sequenceFlow id="Flow_0dk7y6n" sourceRef="Gateway_0lassa0" targetRef="PrepareDemoProjectTask" />
+    <bpmn:sequenceFlow id="Flow_08qkujq" sourceRef="Gateway_1vwl62n" targetRef="SpeakAtMeetupTask" />
+    <bpmn:sequenceFlow id="Flow_1nkbvau" sourceRef="PrepareDemoProjectTask" targetRef="Gateway_1vwl62n" />
+    <bpmn:sequenceFlow id="Flow_124ncyg" sourceRef="Gateway_0lassa0" targetRef="PreparePresentationTask" />
+    <bpmn:sequenceFlow id="Flow_0faq3ks" sourceRef="PreparePresentationTask" targetRef="Gateway_1vwl62n" />
+    <bpmn:serviceTask id="AgreeAnAppointmentTask" name="Договориться о выступлении">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="agree-an-appointment" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_1sz6737</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_06ytcxw</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:parallelGateway id="Gateway_0lassa0">
+      <bpmn:incoming>SequenceFlow_06ytcxw</bpmn:incoming>
+      <bpmn:outgoing>Flow_0dk7y6n</bpmn:outgoing>
+      <bpmn:outgoing>Flow_124ncyg</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:serviceTask id="PrepareDemoProjectTask" name="Подготовить демо-проект">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="prepare-demo-project" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0dk7y6n</bpmn:incoming>
+      <bpmn:outgoing>Flow_1nkbvau</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:callActivity id="PreparePresentationTask" name="Подготовить презентацию">
+      <bpmn:extensionElements>
+        <zeebe:calledElement processId="PreparePresentationProcess" propagateAllChildVariables="false" />
+        <zeebe:ioMapping>
+          <zeebe:input source="= &#34;tinkoff&#34;" target="templateId" />
+          <zeebe:output source="= fileId" target="fileId" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_124ncyg</bpmn:incoming>
+      <bpmn:outgoing>Flow_0faq3ks</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:parallelGateway id="Gateway_1vwl62n">
+      <bpmn:incoming>Flow_1nkbvau</bpmn:incoming>
+      <bpmn:incoming>Flow_0faq3ks</bpmn:incoming>
+      <bpmn:outgoing>Flow_08qkujq</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:sequenceFlow id="Flow_1f4qbq8" sourceRef="SpeakAtMeetupTask" targetRef="ShareVideoTask" />
+    <bpmn:sequenceFlow id="Flow_1nljs9a" sourceRef="ShareVideoTask" targetRef="EndEvent" />
+    <bpmn:endEvent id="EndEvent">
+      <bpmn:incoming>Flow_1nljs9a</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:userTask id="SpeakAtMeetupTask" name="Выступить на митапе">
+      <bpmn:incoming>Flow_08qkujq</bpmn:incoming>
+      <bpmn:outgoing>Flow_1f4qbq8</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="ShareVideoTask" name="Выложить видео">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="share-video" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1f4qbq8</bpmn:incoming>
+      <bpmn:outgoing>Flow_1nljs9a</bpmn:outgoing>
+    </bpmn:serviceTask>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_1fn6lin">
+      <bpmndi:BPMNShape id="Participant_1o1nq6l_di" bpmnElement="SpeakAtMeetup" isHorizontal="true">
+        <dc:Bounds x="123" y="60" width="847" height="270" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1nljs9a_di" bpmnElement="Flow_1nljs9a">
+        <di:waypoint x="880" y="200" />
+        <di:waypoint x="912" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1f4qbq8_di" bpmnElement="Flow_1f4qbq8">
+        <di:waypoint x="750" y="200" />
+        <di:waypoint x="780" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0faq3ks_di" bpmnElement="Flow_0faq3ks">
+        <di:waypoint x="540" y="260" />
+        <di:waypoint x="590" y="260" />
+        <di:waypoint x="590" y="225" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_124ncyg_di" bpmnElement="Flow_124ncyg">
+        <di:waypoint x="390" y="225" />
+        <di:waypoint x="390" y="260" />
+        <di:waypoint x="440" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1nkbvau_di" bpmnElement="Flow_1nkbvau">
+        <di:waypoint x="540" y="130" />
+        <di:waypoint x="590" y="130" />
+        <di:waypoint x="590" y="175" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_08qkujq_di" bpmnElement="Flow_08qkujq">
+        <di:waypoint x="615" y="200" />
+        <di:waypoint x="650" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0dk7y6n_di" bpmnElement="Flow_0dk7y6n">
+        <di:waypoint x="390" y="175" />
+        <di:waypoint x="390" y="130" />
+        <di:waypoint x="440" y="130" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1sz6737_di" bpmnElement="SequenceFlow_1sz6737">
+        <di:waypoint x="209" y="200" />
+        <di:waypoint x="240" y="200" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="260" y="105" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_06ytcxw_di" bpmnElement="SequenceFlow_06ytcxw">
+        <di:waypoint x="340" y="200" />
+        <di:waypoint x="365" y="200" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="456" y="105" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent">
+        <dc:Bounds x="173" y="182" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="180" y="218" width="22" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_09m0goq_di" bpmnElement="AgreeAnAppointmentTask">
+        <dc:Bounds x="240" y="160" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0h1bfr3_di" bpmnElement="Gateway_0lassa0">
+        <dc:Bounds x="365" y="175" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0evs4y6_di" bpmnElement="PrepareDemoProjectTask">
+        <dc:Bounds x="440" y="90" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_17tg7u7_di" bpmnElement="PreparePresentationTask">
+        <dc:Bounds x="440" y="220" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1yn30vt_di" bpmnElement="Gateway_1vwl62n">
+        <dc:Bounds x="565" y="175" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_0gbv3sc_di" bpmnElement="EndEvent">
+        <dc:Bounds x="912" y="182" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="876" y="218" width="19" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1lsh6tz_di" bpmnElement="SpeakAtMeetupTask">
+        <dc:Bounds x="650" y="160" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1gldwse_di" bpmnElement="ShareVideoTask">
+        <dc:Bounds x="780" y="160" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
