@@ -5,7 +5,7 @@ import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.camunda.bpm.engine.delegate.JavaDelegate
 import org.springframework.stereotype.Component
 import ru.akonyaev.camunda.demo.component.PresentationStorage
-import ru.akonyaev.camunda.demo.process.fileId
+import ru.akonyaev.camunda.demo.camunda.fileId
 import java.util.concurrent.TimeUnit
 
 @Component

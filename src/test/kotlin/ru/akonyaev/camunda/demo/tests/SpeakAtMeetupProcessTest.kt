@@ -21,16 +21,17 @@ import org.junit.Before
 import org.junit.ClassRule
 import org.junit.Rule
 import org.junit.Test
+import ru.akonyaev.camunda.demo.camunda.FILE_ID
+import ru.akonyaev.camunda.demo.camunda.PRESENTATION_DATE
 import ru.akonyaev.camunda.demo.camunda.ProcessDefinitionKey
+import ru.akonyaev.camunda.demo.camunda.REVIEW_ITERATION
+import ru.akonyaev.camunda.demo.camunda.TEMPLATE_ID
+import ru.akonyaev.camunda.demo.camunda.TITLE
 import ru.akonyaev.camunda.demo.component.PresentationStorage
 import ru.akonyaev.camunda.demo.model.SpeakAtMeetupRequest
-import ru.akonyaev.camunda.demo.process.FILE_ID
-import ru.akonyaev.camunda.demo.process.PRESENTATION_DATE
 import ru.akonyaev.camunda.demo.process.ProcessDefinitionName
-import ru.akonyaev.camunda.demo.process.REVIEW_ITERATION
-import ru.akonyaev.camunda.demo.process.TEMPLATE_ID
-import ru.akonyaev.camunda.demo.process.TITLE
 import ru.akonyaev.camunda.demo.process.preparePresentation.FixRemarksDelegate
+import ru.akonyaev.camunda.demo.process.preparePresentation.FixRemarksTaskHandler
 import ru.akonyaev.camunda.demo.process.preparePresentation.WriteDraftDelegate
 import ru.akonyaev.camunda.demo.process.speakAtMeetup.AgreeAnAppointmentDelegate
 import ru.akonyaev.camunda.demo.process.speakAtMeetup.PrepareDemoProjectDelegate
@@ -68,7 +69,8 @@ class SpeakAtMeetupProcessTest {
             ShareVideoDelegate(presentationStorage),
 
             WriteDraftDelegate(presentationStorage),
-            FixRemarksDelegate()
+            // TODO создавать делегат на лету, как где то я создаю фейковый
+            FixRemarksDelegate(FixRemarksTaskHandler())
         ).forEach { delegate ->
             Mocks.register(
                 delegate.javaClass.simpleName.replaceFirstChar { it.lowercase() },
@@ -123,7 +125,6 @@ class SpeakAtMeetupProcessTest {
                 FILE_ID to presentationFileId
             )
             setVariable(REVIEW_ITERATION to 2)
-
             jump(from = "DoReviewTask", to = "FixRemarksTask")
             executeJob("FixRemarksTask")
 

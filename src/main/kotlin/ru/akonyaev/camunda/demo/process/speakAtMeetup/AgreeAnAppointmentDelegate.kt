@@ -4,7 +4,7 @@ import mu.KLogging
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.camunda.bpm.engine.delegate.JavaDelegate
 import org.springframework.stereotype.Component
-import ru.akonyaev.camunda.demo.process.presentationDate
+import ru.akonyaev.camunda.demo.camunda.presentationDate
 import java.time.LocalDateTime
 import java.util.concurrent.TimeUnit
 

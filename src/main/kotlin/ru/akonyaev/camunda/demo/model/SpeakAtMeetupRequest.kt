@@ -2,9 +2,9 @@ package ru.akonyaev.camunda.demo.model
 
 import io.swagger.annotations.ApiModel
 import io.swagger.annotations.ApiModelProperty
-import ru.akonyaev.camunda.demo.process.CORRELATION_ID
-import ru.akonyaev.camunda.demo.process.REQUEST_ID
-import ru.akonyaev.camunda.demo.process.TITLE
+import ru.akonyaev.camunda.demo.camunda.CORRELATION_ID
+import ru.akonyaev.camunda.demo.camunda.REQUEST_ID
+import ru.akonyaev.camunda.demo.camunda.TITLE
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotNull
 

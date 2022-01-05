@@ -1,7 +1,6 @@
-package ru.akonyaev.camunda.demo.process
+package ru.akonyaev.camunda.demo.camunda
 
 import org.camunda.bpm.engine.delegate.DelegateExecution
-import ru.akonyaev.camunda.demo.camunda.VariableDelegate
 import java.time.LocalDateTime
 
 const val REQUEST_ID = "requestId"

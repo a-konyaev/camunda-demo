@@ -10,11 +10,11 @@ import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.camunda.bpm.extension.mockito.delegate.DelegateExecutionFake
 import org.junit.jupiter.api.Test
 import ru.akonyaev.camunda.demo.component.PresentationStorage
-import ru.akonyaev.camunda.demo.process.fileId
+import ru.akonyaev.camunda.demo.camunda.fileId
 import ru.akonyaev.camunda.demo.process.preparePresentation.WriteDraftDelegate
-import ru.akonyaev.camunda.demo.process.reviewIteration
-import ru.akonyaev.camunda.demo.process.templateId
-import ru.akonyaev.camunda.demo.process.title
+import ru.akonyaev.camunda.demo.camunda.reviewIteration
+import ru.akonyaev.camunda.demo.camunda.templateId
+import ru.akonyaev.camunda.demo.camunda.title
 
 class WriteDraftDelegateTest {
 
