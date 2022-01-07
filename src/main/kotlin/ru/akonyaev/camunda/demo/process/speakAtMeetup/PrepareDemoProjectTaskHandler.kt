@@ -1,17 +1,16 @@
 package ru.akonyaev.camunda.demo.process.speakAtMeetup
 
 import mu.KLogging
-import org.camunda.bpm.engine.delegate.DelegateExecution
-import org.camunda.bpm.engine.delegate.JavaDelegate
 import org.springframework.stereotype.Component
+import ru.akonyaev.camunda.demo.task.TaskHandlerNoInputOutput
 import java.util.concurrent.TimeUnit
 
 @Component
-class PrepareDemoProjectDelegate : JavaDelegate {
+class PrepareDemoProjectTaskHandler : TaskHandlerNoInputOutput() {
 
-    override fun execute(execution: DelegateExecution) {
+    override fun handleNoInputOutput() {
         logger.info { "Preparing demo project..." }
-        TimeUnit.SECONDS.sleep(3)
+        TimeUnit.SECONDS.sleep(1)
     }
 
     companion object : KLogging()

@@ -7,6 +7,10 @@ spring:
       use-new-id-generator-mappings: false
     show_sql: false
 
+springdoc:
+  packagesToScan: ru.akonyaev.camunda.demo.controller
+  pathsToMatch: /process/**
+
 camunda:
   datasource:
     jdbc-url: jdbc:postgresql://localhost:5432/

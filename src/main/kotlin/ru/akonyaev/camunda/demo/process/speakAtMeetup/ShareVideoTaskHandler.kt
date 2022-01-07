@@ -1,24 +1,26 @@
 package ru.akonyaev.camunda.demo.process.speakAtMeetup
 
 import mu.KLogging
-import org.camunda.bpm.engine.delegate.DelegateExecution
-import org.camunda.bpm.engine.delegate.JavaDelegate
 import org.springframework.stereotype.Component
 import ru.akonyaev.camunda.demo.component.PresentationStorage
-import ru.akonyaev.camunda.demo.camunda.fileId
+import ru.akonyaev.camunda.demo.task.TaskHandlerNoOutput
 import java.util.concurrent.TimeUnit
 
 @Component
-class ShareVideoDelegate(
+class ShareVideoTaskHandler(
     private val presentationStorage: PresentationStorage
-) : JavaDelegate {
+) : TaskHandlerNoOutput<ShareVideoTaskHandler.Input>(Input::class) {
 
-    override fun execute(execution: DelegateExecution) {
+    override fun handleNoOutput(input: Input) {
         logger.info { "Sharing video..." }
-        TimeUnit.SECONDS.sleep(3)
+        TimeUnit.SECONDS.sleep(1)
 
-        presentationStorage.share(execution.fileId)
+        presentationStorage.share(input.fileId)
     }
+
+    data class Input(
+        val fileId: String
+    )
 
     companion object : KLogging()
 }

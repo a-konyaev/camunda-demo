@@ -1,6 +1,10 @@
 package ru.akonyaev.camunda.demo.utils
 
 import java.time.Duration
+import java.util.Locale
+import kotlin.reflect.KClass
+
+fun String.lowercaseFirstChar() = replaceFirstChar { it.lowercase(Locale.getDefault()) }
 
 fun String.camelToKebabCase(): String {
     val d = 'a' - 'A'
@@ -21,3 +25,6 @@ inline fun Int.ifPositive(block: (Int) -> Unit) {
 inline fun Long.ifPositiveAsDurationInMillis(block: (Duration) -> Unit) {
     if (this > 0) block(Duration.ofMillis(this))
 }
+
+fun KClass<*>.getShortName() =
+    this.simpleName ?: throw IllegalStateException("Cannot get simple name for class: $this")

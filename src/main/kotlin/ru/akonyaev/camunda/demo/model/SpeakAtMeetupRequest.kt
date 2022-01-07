@@ -1,24 +1,23 @@
 package ru.akonyaev.camunda.demo.model
 
-import io.swagger.annotations.ApiModel
-import io.swagger.annotations.ApiModelProperty
+import io.swagger.v3.oas.annotations.media.Schema
 import ru.akonyaev.camunda.demo.camunda.CORRELATION_ID
 import ru.akonyaev.camunda.demo.camunda.REQUEST_ID
 import ru.akonyaev.camunda.demo.camunda.TITLE
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotNull
 
-@ApiModel
+@Schema
 data class SpeakAtMeetupRequest(
-    @ApiModelProperty("Request identity", required = true)
+    @Schema(name = "Request identity", required = true)
     @field:NotBlank
     val requestId: String,
 
-    @ApiModelProperty("Meetup title", required = true)
+    @Schema(name = "Meetup title", required = true)
     @field:NotNull
     val title: String,
 
-    @ApiModelProperty("Id to correlate a request with a response", required = true)
+    @Schema(name = "Id to correlate a request with a response", required = true)
     @field:NotBlank
     val correlationId: String
 ) {

@@ -1,4 +1,4 @@
-package ru.akonyaev.camunda.demo.workflow
+package ru.akonyaev.camunda.demo.task
 
 class TaskBpmnError(
     val errorCode: String,

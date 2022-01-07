@@ -30,12 +30,13 @@ import ru.akonyaev.camunda.demo.camunda.TITLE
 import ru.akonyaev.camunda.demo.component.PresentationStorage
 import ru.akonyaev.camunda.demo.model.SpeakAtMeetupRequest
 import ru.akonyaev.camunda.demo.process.ProcessDefinitionName
-import ru.akonyaev.camunda.demo.process.preparePresentation.FixRemarksDelegate
 import ru.akonyaev.camunda.demo.process.preparePresentation.FixRemarksTaskHandler
-import ru.akonyaev.camunda.demo.process.preparePresentation.WriteDraftDelegate
-import ru.akonyaev.camunda.demo.process.speakAtMeetup.AgreeAnAppointmentDelegate
-import ru.akonyaev.camunda.demo.process.speakAtMeetup.PrepareDemoProjectDelegate
-import ru.akonyaev.camunda.demo.process.speakAtMeetup.ShareVideoDelegate
+import ru.akonyaev.camunda.demo.process.preparePresentation.WriteDraftTaskHandler
+import ru.akonyaev.camunda.demo.process.speakAtMeetup.AgreeAnAppointmentTaskHandler
+import ru.akonyaev.camunda.demo.process.speakAtMeetup.PrepareDemoProjectTaskHandler
+import ru.akonyaev.camunda.demo.process.speakAtMeetup.ShareVideoTaskHandler
+import ru.akonyaev.camunda.demo.utils.getDelegateName
+import ru.akonyaev.camunda.demo.utils.toDelegate
 import java.util.UUID
 
 @Deployment(
@@ -64,18 +65,13 @@ class SpeakAtMeetupProcessTest {
     @Before
     fun setUp() {
         listOf(
-            AgreeAnAppointmentDelegate(),
-            PrepareDemoProjectDelegate(),
-            ShareVideoDelegate(presentationStorage),
-
-            WriteDraftDelegate(presentationStorage),
-            // TODO создавать делегат на лету, как где то я создаю фейковый
-            FixRemarksDelegate(FixRemarksTaskHandler())
-        ).forEach { delegate ->
-            Mocks.register(
-                delegate.javaClass.simpleName.replaceFirstChar { it.lowercase() },
-                delegate
-            )
+            AgreeAnAppointmentTaskHandler(),
+            PrepareDemoProjectTaskHandler(),
+            ShareVideoTaskHandler(presentationStorage),
+            WriteDraftTaskHandler(presentationStorage),
+            FixRemarksTaskHandler()
+        ).forEach {
+            Mocks.register(it.getDelegateName(), it.toDelegate())
         }
 
         whenever(presentationStorage.create(any(), any())).thenReturn(presentationFileId)
@@ -206,3 +202,4 @@ class SpeakAtMeetupProcessTest {
             .build()
     }
 }
+

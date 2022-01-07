@@ -6,35 +6,32 @@ import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import io.kotlintest.shouldBe
-import org.camunda.bpm.engine.delegate.DelegateExecution
-import org.camunda.bpm.extension.mockito.delegate.DelegateExecutionFake
 import org.junit.jupiter.api.Test
 import ru.akonyaev.camunda.demo.component.PresentationStorage
-import ru.akonyaev.camunda.demo.camunda.fileId
-import ru.akonyaev.camunda.demo.process.preparePresentation.WriteDraftDelegate
-import ru.akonyaev.camunda.demo.camunda.reviewIteration
-import ru.akonyaev.camunda.demo.camunda.templateId
-import ru.akonyaev.camunda.demo.camunda.title
+import ru.akonyaev.camunda.demo.process.preparePresentation.WriteDraftTaskHandler
 
-class WriteDraftDelegateTest {
+class WriteDraftTaskHandlerTest {
 
-    private val execution: DelegateExecution = DelegateExecutionFake()
     private val presentationStorage: PresentationStorage = mock()
-    private val delegate = WriteDraftDelegate(presentationStorage)
+    private val taskHandler = WriteDraftTaskHandler(presentationStorage)
 
     @Test
     fun `when delegate executed then process variables are set`() {
         // given
         whenever(presentationStorage.create(any(), any())).thenReturn("12345")
-        execution.title = "Camunda pitfalls"
-        execution.templateId = "tinkoff"
+        val input = WriteDraftTaskHandler.Input(
+            title = "Camunda pitfalls",
+            templateId = "tinkoff"
+        )
 
         // when
-        delegate.execute(execution)
+        val output = taskHandler.handle(input)
 
         // then
-        execution.reviewIteration shouldBe 0
-        execution.fileId shouldBe "12345"
+        with(output) {
+            reviewIteration shouldBe 0
+            fileId shouldBe "12345"
+        }
         verify(presentationStorage).create(
             check { it shouldBe "Camunda pitfalls" },
             check { it shouldBe "tinkoff" }

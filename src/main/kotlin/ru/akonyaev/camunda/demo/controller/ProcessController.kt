@@ -1,9 +1,9 @@
 package ru.akonyaev.camunda.demo.controller
 
-import io.swagger.annotations.Api
-import io.swagger.annotations.ApiOperation
-import io.swagger.annotations.ApiResponse
-import io.swagger.annotations.ApiResponses
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.responses.ApiResponse
+import io.swagger.v3.oas.annotations.responses.ApiResponses
+import io.swagger.v3.oas.annotations.tags.Tag
 import mu.KLogging
 import org.camunda.bpm.engine.HistoryService
 import org.camunda.bpm.engine.RuntimeService
@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import ru.akonyaev.camunda.demo.model.SpeakAtMeetupProcessInfo
 import ru.akonyaev.camunda.demo.model.SpeakAtMeetupRequest
@@ -22,10 +21,7 @@ import java.time.ZoneId
 import java.util.Date
 import javax.validation.Valid
 
-@Api(
-    description = "Speak at a meetup",
-    tags = ["speak-at-meetup"]
-)
+@Tag(name = "Speak at a meetup (Camunda platform)")
 @RestController
 @RequestMapping("/process")
 class ProcessController(
@@ -33,12 +29,12 @@ class ProcessController(
     private val historyService: HistoryService
 ) {
 
-    @ApiOperation(value = "Start the process")
+    @Operation(summary = "Start the process")
     @ApiResponses(
         value = [
-            ApiResponse(code = 200, message = "Process started", response = String::class),
-            ApiResponse(code = 400, message = "Bad request", response = ResponseStatus::class),
-            ApiResponse(code = 500, message = "Internal error", response = ResponseStatus::class)
+            ApiResponse(responseCode = "200", description = "Process started"),
+            ApiResponse(responseCode = "400", description = "Bad request"),
+            ApiResponse(responseCode = "500", description = "Internal error")
         ]
     )
     @PostMapping("/start", produces = [MediaType.TEXT_PLAIN_VALUE])
@@ -72,7 +68,7 @@ class ProcessController(
         }
     }
 
-    @ApiOperation(value = "Get active processes")
+    @Operation(summary = "Get active processes")
     @GetMapping("/", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun getActiveProcesses() =
         this.getActiveProcessInstances()
