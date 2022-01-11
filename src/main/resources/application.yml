@@ -39,5 +39,14 @@ camunda:
 
 zeebe:
   client:
+    # local zeebe ---------------------------------
     gateway.address: localhost:26500
     security.plaintext: true
+    # zeebe in cloud ------------------------------
+#    cloud:
+#      auth-url: 'https://login.cloud.camunda.io/oauth/token'
+#      base-url: 'zeebe.camunda.io'
+#      region: 'bru-2'
+#      cluster-id: '***'
+#      client-id: '***'
+#      client-secret: '***'
