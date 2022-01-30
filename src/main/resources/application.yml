@@ -38,6 +38,7 @@ camunda:
       firstName: Demo
 
 zeebe:
+#  enabled: true
   client:
     # local zeebe ---------------------------------
     gateway.address: localhost:26500

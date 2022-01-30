@@ -1,4 +1,4 @@
-package ru.akonyaev.camunda.demo.configuration
+package ru.akonyaev.camunda.demo.configuration.zeebe
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.core.JsonProcessingException

@@ -1,4 +1,4 @@
-package ru.akonyaev.camunda.demo.configuration
+package ru.akonyaev.camunda.demo.configuration.zeebe
 
 import io.camunda.zeebe.spring.client.ZeebeClientLifecycle
 import ru.akonyaev.camunda.demo.task.TaskHandler

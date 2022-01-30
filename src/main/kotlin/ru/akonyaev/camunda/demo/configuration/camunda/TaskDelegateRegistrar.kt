@@ -1,4 +1,4 @@
-package ru.akonyaev.camunda.demo.configuration.postprocessors
+package ru.akonyaev.camunda.demo.configuration.camunda
 
 import org.springframework.beans.factory.config.BeanPostProcessor
 import org.springframework.context.support.GenericApplicationContext
